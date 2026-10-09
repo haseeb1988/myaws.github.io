@@ -1,42 +1,1182 @@
-You are a course-content developer for an AWS Certified Solutions Architect – Associate (SAA-C03) course. Your learners have basic AWS knowledge. You draft new lessons as single, self-contained HTML pages that are published as artifacts. The style guide at https://claude.ai/artifact/TbyYQpwpKNSYwmbLkQ6Git overrides these defaults where they differ.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS SAA-C03 Prep: Amazon Route 53 Master Class</title>
+  <style>
+    /* Global Resets & Typography */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #2d3748;
+      background-color: #f7fafc;
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+    }
 
-## How you work
-- If something essential is missing (lesson number, topic, source material), ask exactly ONE question first. Otherwise proceed.
-- Use the instructor's material first (text, slides, links). Fill gaps only from AWS documentation you have checked. Flag every gap and every claim you could not verify, in one line.
-- Never invent URLs, prices, quotas, counts, or service behavior. For time-sensitive facts, check the source or say "check the pricing page".
-- Flag errors in slides or source text (typos, inconsistent CIDRs, outdated service names or limits). Don't silently copy or fix them: note them in the caption or reply.
-- Use current AWS service names.
-- Default depth: detailed, with examples. If the instructor asks for concise, switch to short bullets.
-- Don't add, remove, or restructure anything that wasn't requested.
+    /* Color Palette Rules */
+    .page-title { color: #000000; font-size: 2rem; margin-bottom: 1rem; }
+    h1 { color: #0b5394; font-size: 1.75rem; margin-top: 1.5rem; margin-bottom: 1rem; }
+    h2 { color: #000000; font-size: 1.35rem; margin-top: 1.25rem; margin-bottom: 0.75rem; }
+    h3 { color: #0079c9; font-size: 1.15rem; margin-top: 1rem; margin-bottom: 0.5rem; }
 
-## Lesson structure
-- File: lesson-<number>-<slug>.html. Title: "Lesson <number> - <Name>". One emoji favicon. Re-publish to the same artifact URL on every update.
-- Sidebar tabs with Previous/Next buttons.
-  - Tab 0: Lesson Overview, Learning Objectives (verbs rising from Define to Design), table of contents.
-  - Then the topic tabs.
-  - Then Comparison & Scenarios (comparison tables and an SAA-C03 cheat sheet).
-  - Knowledge Check is always last: open-ended questions with expandable model answers, no multiple choice.
-- Every topic tab has:
-  - a Problem Statement box;
-  - numbered h2/h3 headings (1.1, 1.1.1);
-  - bullets and tables, one idea per bullet, with real values and examples;
-  - an original SVG diagram where a picture helps;
-  - an Exam trap callout (orange), a Memory hook (blue), SAA-C03 Keyword Triggers (green, "phrase → answer");
-  - Useful Resources (AWS documentation links, opening in a new tab).
-- Exam-style question: scenario box, options A–D, expandable answer with a per-option table. Mark it as written for the course.
-- Labs and assignments: dashed lab box plus an "Important Lab Expectation" box with the POC link. GLAB, PA, and POC numbers are the lesson number plus .n and are unique across the course. Videos go in a "Mandatory Video" box with a link. When a live demo isn't possible, add a note saying to watch the video.
-- Headings use Title Case with spaces. Acronyms and product names stay as written. Small words (a, an, the, and, of, in, to, for, vs.) stay lowercase unless first, last, or after a colon.
-- Whenever you insert, move, or remove content, renumber headings, figures, and in-text references.
+    /* Layout Structure */
+    #app-container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
 
-## Images
-- Embed as base64 WebP (keep animated GIFs as GIF). Always add alt text and a caption: "Figure Na — <what it shows>."
-- Credit every provided picture: "(Source: AWS.)". Diagrams you draw yourself say "(Original diagram for this course.)"
-- Crop slide titles and decorative bars. Never remove watermarks. Rebuild text-only images as tables.
+    /* Sticky Left Sidebar Navigation */
+    #sidebar {
+      width: 290px;
+      background-color: #1a202c;
+      color: #edf2f7;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding-top: 1.5rem;
+      border-right: 1px solid #2d3748;
+    }
 
-## Publishing and quality gates
-- Pages must be self-contained and under 16 MB. No external images, scripts, or fonts beyond the allowed hosts. Embedded players (such as YouTube) may be blocked, so always add a visible link as a fallback.
-- Before each publish: keep a backup of the previous version, then test every tab at desktop and phone width (no horizontal scroll, no script errors, all images load).
-- No emoji in the content. Keep it accessible: alt text, labels, readable contrast.
+    .sidebar-header {
+      padding: 0 1.25rem 1.25rem 1.25rem;
+      border-bottom: 1px solid #4a5568;
+    }
 
-## Replies
-- After a task, reply in one or two lines: what changed and where, plus a flag only if something needs attention. No explanations unless asked.
+    .sidebar-header h2 {
+      color: #ffffff;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-tabs {
+      list-style-type: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+
+    .nav-tab-item {
+      margin-bottom: 0.25rem;
+    }
+
+    .nav-tab-button {
+      width: 100%;
+      text-align: left;
+      padding: 0.85rem 1.25rem;
+      background: none;
+      border: none;
+      color: #cbd5e0;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      display: block;
+      border-left: 4px solid transparent;
+    }
+
+    .nav-tab-button:hover {
+      background-color: #2d3748;
+      color: #ffffff;
+    }
+
+    .nav-tab-button.active {
+      background-color: #2b6cb0;
+      color: #ffffff;
+      border-left-color: #63b3ed;
+      font-weight: bold;
+    }
+
+    /* Main Content Area */
+    #main-content {
+      flex-grow: 1;
+      padding: 2.5rem;
+      background-color: #ffffff;
+      max-width: 1100px;
+      overflow-y: auto;
+    }
+
+    /* Tab Content Display Logic */
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Navigation Buttons at Bottom of Tabs */
+    .tab-navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #e2e8f0;
+    }
+
+    .btn-nav {
+      background-color: #0b5394;
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-nav:hover {
+      background-color: #0079c9;
+    }
+
+    .btn-nav:disabled {
+      background-color: #cbd5e0;
+      cursor: not-allowed;
+    }
+
+    /* Structural Components */
+    .problem-statement-box {
+      background-color: #fff5f5;
+      border-left: 5px solid #e53e3e;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .exam-trigger-box {
+      background-color: #ebf8ff;
+      border-left: 5px solid #3182ce;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .warning-callout-box {
+      background-color: #fffaf0;
+      border-left: 5px solid #dd6b20;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* Hands-On Lab Styling Requirement */
+    .hands-on-lab-container {
+      background-color: #fffdf5; /* Cream background */
+      border: 2px dashed #0079c9;
+      padding: 1.75rem;
+      margin: 2.5rem 0;
+      border-radius: 6px;
+    }
+
+    .lab-title-centered {
+      text-align: center;
+      color: #0079c9;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+
+    .lab-overview-heading {
+      color: #0079c9;
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .lab-link {
+      color: #8b0000; /* Dark Red */
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .important-lab-expectation-box {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e0;
+      padding: 1rem;
+      margin-top: 1.25rem;
+      border-radius: 4px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f7fafc;
+      color: #2d3748;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fcfcfc;
+    }
+
+    /* Knowledge Check Collapsible */
+    .collapsible-container {
+      margin: 1.5rem 0;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+    }
+
+    .collapsible-trigger {
+      width: 100%;
+      background-color: #edf2f7;
+      border: none;
+      padding: 1rem;
+      text-align: left;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2d3748;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .collapsible-trigger:hover {
+      background-color: #e2e8f0;
+    }
+
+    .collapsible-content {
+      padding: 1.25rem;
+      background-color: #ffffff;
+      display: none;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    /* Lists & Links */
+    ul, ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    li {
+      margin-bottom: 0.35rem;
+    }
+
+    a {
+      color: #0b5394;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive Mobile Formatting */
+    @media (max-width: 768px) {
+      #app-container {
+        flex-direction: column;
+      }
+
+      #sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding-top: 0.5rem;
+      }
+
+      .nav-tabs {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        margin: 0.5rem 0;
+      }
+
+      .nav-tab-item {
+        flex: 0 0 auto;
+      }
+
+      .nav-tab-button {
+        border-left: none;
+        border-bottom: 4px solid transparent;
+        padding: 0.75rem 1rem;
+      }
+
+      .nav-tab-button.active {
+        border-left-color: transparent;
+        border-bottom-color: #63b3ed;
+      }
+
+      #main-content {
+        padding: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app-container">
+    <!-- Sticky Navigation Sidebar -->
+    <nav id="sidebar" aria-label="Course Sections Navigation">
+      <div class="sidebar-header">
+        <h2>AWS SAA-C03 Prep</h2>
+      </div>
+      <ul class="nav-tabs" role="tablist">
+        <li class="nav-tab-item" role="presentation">
+          <button class="nav-tab-button active" id="tab-btn-0" role="tab" aria-selected="true" aria-controls="pane-0" onclick="switchTab(0)">
+            (0) Overview &amp; Objectives
+          </button>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <button class="nav-tab-button" id="tab-btn-1" role="tab" aria-selected="false" aria-controls="pane-1" onclick="switchTab(1)">
+            (1) Hosted Zones &amp; ALIAS Records
+          </button>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <button class="nav-tab-button" id="tab-btn-2" role="tab" aria-selected="false" aria-controls="pane-2" onclick="switchTab(2)">
+            (2) Route 53 Routing Policies
+          </button>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <button class="nav-tab-button" id="tab-btn-3" role="tab" aria-selected="false" aria-controls="pane-3" onclick="switchTab(3)">
+            (3) Health Checks &amp; DNS Failover
+          </button>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <button class="nav-tab-button" id="tab-btn-4" role="tab" aria-selected="false" aria-controls="pane-4" onclick="switchTab(4)">
+            (4) Hybrid DNS &amp; Resolver
+          </button>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <button class="nav-tab-button" id="tab-btn-5" role="tab" aria-selected="false" aria-controls="pane-5" onclick="switchTab(5)">
+            (5) Pulling It Together
+          </button>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <button class="nav-tab-button" id="tab-btn-6" role="tab" aria-selected="false" aria-controls="pane-6" onclick="switchTab(6)">
+            (6) Knowledge Check
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content" role="main">
+
+      <!-- TAB 0: OVERVIEW & OBJECTIVES -->
+      <section id="pane-0" class="tab-pane active" role="tabpanel" aria-labelledby="tab-btn-0">
+        <h1 class="page-title">Amazon Route 53 Technical Guide: SAA-C03 Master Class</h1>
+        
+        <h1>Lesson Overview</h1>
+        <p>In this lesson, we will cover:</p>
+        <ul>
+          <li>Public vs. Private Hosted Zones, split-view DNS resolution, and standard record types versus Route 53 ALIAS records.</li>
+          <li>All eight Route 53 Routing Policies (Simple, Weighted, Latency, Failover, Geolocation, Geoproximity, Multi-Value Answer, and IP-based).</li>
+          <li>Active-passive and active-active DNS health checking, CloudWatch alarm integration, and Evaluate Target Health mechanisms.</li>
+          <li>Hybrid DNS architectures utilizing Route 53 Resolver Inbound and Outbound endpoints to bridge on-premises data centers with VPC networks.</li>
+          <li>End-to-end architectural synthesis, decision frameworks, and scenario pattern matching for the SAA-C03 exam.</li>
+        </ul>
+
+        <h1>Learning Objectives</h1>
+        <p>By completing this technical guide, you will be able to:</p>
+        <ol>
+          <li><strong>Define</strong> the core components of Amazon Route 53, including Hosted Zones, Resource Record Sets, and DNS Resolver Endpoints.</li>
+          <li><strong>Explain</strong> the architectural advantage of Route 53 ALIAS records over standard DNS CNAME records at the Zone Apex.</li>
+          <li><strong>Configure</strong> sophisticated routing policies to optimize user latency, enforce regional data compliance, and manage canary deployments.</li>
+          <li><strong>Differentiate</strong> between Geolocation and Geoproximity routing policies based on traffic bias and geographic boundary requirements.</li>
+          <li><strong>Justify</strong> active-passive DNS failover designs using standalone health checks versus integrated Evaluate Target Health settings.</li>
+          <li><strong>Design</strong> a hybrid DNS infrastructure connecting on-premises Active Directory DNS servers with private VPC workloads securely without internet traversal.</li>
+        </ol>
+
+        <h1>Table of Contents</h1>
+        <ul>
+          <li><a href="javascript:void(0)" onclick="switchTab(1)">Topic 1: Hosted Zones &amp; ALIAS Records (Zone Apex Solution)</a></li>
+          <li><a href="javascript:void(0)" onclick="switchTab(2)">Topic 2: Route 53 Routing Policies (Traffic Management)</a></li>
+          <li><a href="javascript:void(0)" onclick="switchTab(3)">Topic 3: Health Checks &amp; DNS Failover (Resilience)</a></li>
+          <li><a href="javascript:void(0)" onclick="switchTab(4)">Topic 4: Hybrid DNS &amp; Route 53 Resolver (Enterprise Architecture)</a></li>
+          <li><a href="javascript:void(0)" onclick="switchTab(5)">Topic 5: Pulling It Together (Architecture Assembly &amp; Drills)</a></li>
+          <li><a href="javascript:void(0)" onclick="switchTab(6)">Topic 6: Knowledge Check (Open-Ended Assessment)</a></li>
+        </ul>
+
+        <div class="tab-navigation-buttons">
+          <button class="btn-nav" disabled>Previous</button>
+          <button class="btn-nav" onclick="switchTab(1)">Next: Hosted Zones &amp; ALIAS Records</button>
+        </div>
+      </section>
+
+      <!-- TAB 1: HOSTED ZONES & ALIAS RECORDS -->
+      <section id="pane-1" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-1">
+        <h1>Topic 1: Hosted Zones &amp; ALIAS Records</h1>
+
+        <div class="problem-statement-box">
+          <h2>Problem Statement</h2>
+          <p>
+            An organization is launching its flagship website at the root domain (Zone Apex, e.g., <code>example.com</code>). They need to point this apex domain directly to an AWS Application Load Balancer (ALB) or Amazon CloudFront distribution. Standard DNS specifications (RFC 1034) strictly prohibit placing a standard CNAME record at the root domain level. Additionally, pointing an A record to a static IP is impossible because AWS load balancers do not use static IP addresses. How can you point a naked zone apex domain to AWS resources dynamically while eliminating additional DNS query fees?
+          </p>
+        </div>
+
+        <h2>Core Concepts: Hosted Zones and ALIAS vs. CNAME</h2>
+        <p>
+          <strong>Amazon Route 53</strong> is a highly available and scalable Domain Name System (DNS) web service running on port 53. It performs three core functions: domain registration, DNS routing, and health checking.
+        </p>
+
+        <h3>1. Public vs. Private Hosted Zones</h3>
+        <ul>
+          <li><strong>Public Hosted Zone:</strong> Contains DNS record sets that route internet traffic to public endpoints (e.g., public web servers, S3 static websites, CloudFront).</li>
+          <li><strong>Private Hosted Zone:</strong> A container for records reachable only within one or more Amazon VPCs that you associate with the hosted zone. It enables custom internal domain names (e.g., <code>db.internal.company.local</code>) without exposing DNS entries to the public internet.</li>
+        </ul>
+
+        <h3>2. The Zone Apex Problem: CNAME vs. Route 53 ALIAS</h3>
+        <p>
+          A <strong>CNAME record</strong> maps a DNS name to another DNS name (e.g., <code>www.example.com -&gt; my-alb-123.us-east-1.elb.amazonaws.com</code>). However, per standard DNS rules, a CNAME cannot exist at the root level (zone apex: <code>example.com</code>) because the zone apex already contains SOA and NS records.
+        </p>
+        <p>
+          AWS created <strong>ALIAS Records</strong> as an AWS-specific extension to DNS. An ALIAS record acts like an A or AAAA record to external clients, but internally points directly to an AWS resource.
+        </p>
+
+        <h2>Detailed Comparison: ALIAS vs. CNAME Records</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Route 53 ALIAS Record</th>
+              <th>Standard CNAME Record</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Zone Apex Support (example.com)</strong></td>
+              <td><strong>Yes</strong> — Allowed at the root domain level.</td>
+              <td><strong>No</strong> — Forbidden by standard DNS specifications.</td>
+            </tr>
+            <tr>
+              <td><strong>DNS Query Billing</strong></td>
+              <td><strong>Free</strong> — Queries to supported AWS targets incur no charge.</td>
+              <td><strong>Charged</strong> — Charged at standard Route 53 DNS query rates.</td>
+            </tr>
+            <tr>
+              <td><strong>Performance</strong></td>
+              <td><strong>Single Lookup</strong> — Route 53 returns IP address directly.</td>
+              <td><strong>Double Lookup</strong> — Client must resolve CNAME then resolve target DNS.</td>
+            </tr>
+            <tr>
+              <td><strong>Supported Targets</strong></td>
+              <td>Supported AWS Resources (ALB, NLB, CloudFront, S3, API Gateway) or records in same zone.</td>
+              <td>Any external domain name or host anywhere on the internet.</td>
+            </tr>
+            <tr>
+              <td><strong>Time To Live (TTL)</strong></td>
+              <td>Automatically inherits TTL from the underlying AWS resource.</td>
+              <td>Manually configured custom TTL.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Architectural Diagram: DNS Resolution Path (ALIAS vs. CNAME)</h2>
+        <svg viewBox="0 0 700 320" width="100%" height="auto" role="img" aria-label="Diagram showing direct single-step IP resolution of ALIAS record versus two-step DNS resolution of CNAME record.">
+          <rect x="10" y="10" width="680" height="300" rx="8" fill="#f7fafc" stroke="#cbd5e0" stroke-width="2"/>
+          
+          <!-- Client -->
+          <rect x="30" y="120" width="100" height="80" rx="6" fill="#edf2f7" stroke="#4a5568" stroke-width="1.5"/>
+          <text x="50" y="155" font-weight="bold" fill="#2d3748" font-size="13">DNS Client</text>
+
+          <!-- Route 53 Box -->
+          <rect x="220" y="40" width="220" height="240" rx="6" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+          <text x="240" y="65" font-weight="bold" fill="#0b5394" font-size="13">Route 53 Name Server</text>
+
+          <!-- Path A: ALIAS -->
+          <path d="M 130 140 L 220 100" stroke="#0079c9" stroke-width="2.5" marker-end="url(#arrow)"/>
+          <text x="120" y="110" font-size="11" font-weight="bold" fill="#0079c9">[Path A] Query: example.com (ALIAS)</text>
+          <path d="M 220 120 L 130 155" stroke="#0079c9" stroke-width="2.5" stroke-dasharray="4"/>
+          <text x="140" y="135" font-size="10" fill="#2b6cb0">Returns IP Directly (Single Hop)</text>
+
+          <!-- Path B: CNAME -->
+          <path d="M 130 180 L 220 220" stroke="#dd6b20" stroke-width="2.5" marker-end="url(#arrow)"/>
+          <text x="110" y="210" font-size="11" font-weight="bold" fill="#dd6b20">[Path B] Query: www.example.com (CNAME)</text>
+          <path d="M 220 240 L 130 195" stroke="#dd6b20" stroke-width="2.5" stroke-dasharray="4"/>
+          <text x="140" y="235" font-size="10" fill="#7b341e">Returns Target DNS -> Client Queries Again</text>
+
+          <!-- Targets -->
+          <rect x="500" y="80" width="160" height="60" rx="4" fill="#ffffff" stroke="#3182ce" stroke-width="1.5"/>
+          <text x="510" y="115" font-size="12" font-weight="bold" fill="#0b5394">Application Load Balancer</text>
+
+          <line x1="440" y1="100" x2="500" y2="100" stroke="#3182ce" stroke-width="2"/>
+        </svg>
+        <p><strong>Figure 1a:</strong> Route 53 ALIAS resolution returning immediate IP addresses versus CNAME indirection.</p>
+
+        <div class="exam-trigger-box">
+          <h2>Exam Trigger Callouts</h2>
+          <ul>
+            <li><strong>"Map zone apex / naked domain (example.com) to an AWS resource"</strong> &rarr; Must use an <strong>ALIAS record</strong>.</li>
+            <li><strong>"Avoid DNS query charges for AWS load balancer or CloudFront distribution"</strong> &rarr; <strong>ALIAS record</strong> (ALIAS queries to AWS resources are free).</li>
+            <li><strong>"Internal custom domain name mapping for EC2 instances inside a VPC"</strong> &rarr; <strong>Private Hosted Zone</strong> associated with the VPC.</li>
+          </ul>
+        </div>
+
+        <div class="warning-callout-box">
+          <h2>Exam Trap Warnings</h2>
+          <p>
+            <strong>Classic Trap:</strong> Exam questions may ask if you can point a CNAME to an EC2 instance or S3 bucket at the root level (<code>example.com</code>). Remember: <strong>CNAMEs are NEVER allowed at the zone apex</strong>. Always choose ALIAS for apex domain mapping to AWS endpoints.
+          </p>
+        </div>
+
+        <h2>Useful Resources</h2>
+        <ul>
+          <li><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-alias-types.html" target="_blank" rel="noopener noreferrer">AWS Documentation: Choosing Between Alias and Non-Alias Records</a></li>
+          <li><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html" target="_blank" rel="noopener noreferrer">AWS Documentation: Working with Private Hosted Zones</a></li>
+          <li><a href="https://www.youtube.com/results?search_query=AWS+Route+53+Alias+vs+CNAME+tutorial" target="_blank" rel="noopener noreferrer">Official Video Search: Route 53 ALIAS vs CNAME Deep Dive</a></li>
+        </ul>
+
+        <div class="hands-on-lab-container">
+          <div class="lab-title-centered">Hands-On Lab</div>
+          <div class="lab-overview-heading">Lab Overview:</div>
+          <p>
+            In this lab, you will create a Public Hosted Zone in Amazon Route 53, configure ALIAS records pointing to an Application Load Balancer at the zone apex, and create a Private Hosted Zone associated with a custom VPC for internal service resolution.
+          </p>
+          <p>You can start the following lab(s):</p>
+          <p><a href="https://aws.amazon.com/training/" target="_blank" rel="noopener noreferrer" class="lab-link">GLAB 201 - Configuring Route 53 Hosted Zones and Zone Apex ALIAS Records</a></p>
+
+          <div class="important-lab-expectation-box">
+            <strong>Important Lab Expectation:</strong> If you do not complete all labs during class time, you must finish them after class. Failing to complete all labs before the next session may cause you to fall behind.
+          </div>
+        </div>
+
+        <div class="tab-navigation-buttons">
+          <button class="btn-nav" onclick="switchTab(0)">Previous: Overview</button>
+          <button class="btn-nav" onclick="switchTab(2)">Next: Route 53 Routing Policies</button>
+        </div>
+      </section>
+
+      <!-- TAB 2: ROUTE 53 ROUTING POLICIES -->
+      <section id="pane-2" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-2">
+        <h1>Topic 2: Route 53 Routing Policies</h1>
+
+        <div class="problem-statement-box">
+          <h2>Problem Statement</h2>
+          <p>
+            A global e-commerce business operates application clusters in Virginia (us-east-1), Frankfurt (eu-central-1), and Tokyo (ap-northeast-1). They need to route global users to the server region that delivers the lowest network latency. Furthermore, legal regulations dictate that European user data must remain in Europe, and marketing needs to safely test a new application release on 5% of incoming user traffic. How do you implement intelligent traffic routing based on latency, user geography, and controlled traffic shifting?
+          </p>
+        </div>
+
+        <h2>Core Concepts: Route 53 Routing Policies</h2>
+        <p>
+          A **Routing Policy** determines how Amazon Route 53 responds to DNS queries. Route 53 supports eight distinct routing policies designed for specific architectural patterns:
+        </p>
+
+        <h3>1. Comprehensive Routing Policy Matrix</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Routing Policy</th>
+              <th>How Traffic Is Routed</th>
+              <th>Primary SAA-C03 Use Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Simple</strong></td>
+              <td>Routes traffic to a single resource or returns multiple values chosen randomly.</td>
+              <td>Single server endpoint with no sophisticated routing logic.</td>
+            </tr>
+            <tr>
+              <td><strong>Weighted</strong></td>
+              <td>Routes traffic across endpoints based on assigned relative integer weights (e.g., 95% / 5%).</td>
+              <td>A/B testing, blue/green deployments, canary software releases.</td>
+            </tr>
+            <tr>
+              <td><strong>Latency-Based</strong></td>
+              <td>Routes users to the AWS region that provides the lowest network latency for the client.</td>
+              <td>Global performance optimization across multiple AWS regions.</td>
+            </tr>
+            <tr>
+              <td><strong>Failover</strong></td>
+              <td>Routes to a Primary resource; automatically redirects to Secondary on health check failure.</td>
+              <td>Active-Passive Disaster Recovery architectures.</td>
+            </tr>
+            <tr>
+              <td><strong>Geolocation</strong></td>
+              <td>Routes based on the explicit **geographic location** (Continent, Country, US State) of the user.</td>
+              <td>Strict regulatory data compliance, localized content/languages.</td>
+            </tr>
+            <tr>
+              <td><strong>Geoproximity</strong></td>
+              <td>Routes based on geographic distance + a **Bias value** to shrink/expand regional routing boundaries.</td>
+              <td>Shifting traffic dynamically between neighboring regions using Traffic Flow.</td>
+            </tr>
+            <tr>
+              <td><strong>Multi-Value Answer</strong></td>
+              <td>Returns up to 8 healthy records randomly selected; acts as basic DNS load balancing.</td>
+              <td>Client-side load balancing with health check filtering (Not a load balancer replacement).</td>
+            </tr>
+            <tr>
+              <td><strong>IP-Based</strong></td>
+              <td>Routes traffic based on client subnet CIDR blocks originating the query.</td>
+              <td>Differentiating traffic from specific corporate ISPs or enterprise subnets.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Deep Dive: Geolocation vs. Geoproximity Routing</h2>
+        <ul>
+          <li><strong>Geolocation Routing:</strong> Strict mapping based on user location. If a user is in France, route them to `eu-central-1`. If an unmapped location queries, it uses the mandatory **Default Record**.</li>
+          <li><strong>Geoproximity Routing:</strong> Distance-based routing that uses a **Bias** (-99 to +99). Increasing bias expands the geographic region that routes to a given target; decreasing bias shrinks it. **Requires Route 53 Traffic Flow visual editor**.</li>
+        </ul>
+
+        <h2>Architectural Diagram: Routing Policy Decision Flow</h2>
+        <svg viewBox="0 0 700 320" width="100%" height="auto" role="img" aria-label="Diagram contrasting Latency-based routing based on ping times versus Geolocation routing based on country boundaries.">
+          <rect x="10" y="10" width="680" height="300" rx="8" fill="#f7fafc" stroke="#cbd5e0" stroke-width="2"/>
+          <text x="30" y="35" font-weight="bold" fill="#0b5394">Route 53 Policy Evaluation Engine</text>
+
+          <!-- Latency Branch -->
+          <rect x="40" y="60" width="290" height="220" rx="6" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.5"/>
+          <text x="50" y="85" font-weight="bold" fill="#0b5394">Latency-Based Routing</text>
+          <text x="50" y="110" font-size="11" fill="#4a5568">&bull; Measures network ping latency to AWS</text>
+          <text x="50" y="130" font-size="11" fill="#4a5568">&bull; Goal: Fastest user response time</text>
+
+          <rect x="60" y="150" width="110" height="50" rx="4" fill="#ffffff" stroke="#3182ce"/>
+          <text x="70" y="180" font-size="10" font-weight="bold" fill="#2b6cb0">US-East Region (20ms)</text>
+
+          <rect x="200" y="150" width="110" height="50" rx="4" fill="#ffffff" stroke="#3182ce"/>
+          <text x="210" y="180" font-size="10" fill="#718096">EU-West Region (120ms)</text>
+
+          <!-- Geolocation Branch -->
+          <rect x="370" y="60" width="290" height="220" rx="6" fill="#feebc8" stroke="#dd6b20" stroke-width="1.5"/>
+          <text x="380" y="85" font-weight="bold" fill="#7b341e">Geolocation Routing</text>
+          <text x="380" y="110" font-size="11" fill="#4a5568">&bull; Evaluates user IP country / continent</text>
+          <text x="380" y="130" font-size="11" fill="#4a5568">&bull; Goal: Strict legal compliance &amp; language</text>
+
+          <rect x="390" y="150" width="110" height="50" rx="4" fill="#ffffff" stroke="#dd6b20"/>
+          <text x="400" y="180" font-size="10" font-weight="bold" fill="#7b341e">User in France -> EU Server</text>
+
+          <rect x="530" y="150" width="110" height="50" rx="4" fill="#ffffff" stroke="#dd6b20"/>
+          <text x="540" y="180" font-size="10" fill="#718096">Default Record -> US Server</text>
+        </svg>
+        <p><strong>Figure 2a:</strong> Operational comparison between Latency-based performance routing and Geolocation compliance routing.</p>
+
+        <div class="exam-trigger-box">
+          <h2>Exam Trigger Callouts</h2>
+          <ul>
+            <li><strong>"Minimize network latency for global users across multiple regions"</strong> &rarr; <strong>Latency-Based Routing Policy</strong>.</li>
+            <li><strong>"Restrict web content based on user location for licensing or legal compliance"</strong> &rarr; <strong>Geolocation Routing Policy</strong>.</li>
+            <li><strong>"Gradually migrate traffic from an old server to a new server (e.g., 90/10 split)"</strong> &rarr; <strong>Weighted Routing Policy</strong>.</li>
+            <li><strong>"Expand or shrink routing boundaries using a bias value"</strong> &rarr; <strong>Geoproximity Routing Policy</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="warning-callout-box">
+          <h2>Exam Trap Warnings</h2>
+          <p>
+            <strong>Geolocation Default Record Trap:</strong> In Geolocation routing, if a user queries from a location that is NOT explicitly defined in your location records, Route 53 returns `NOERROR` with no IP unless you configure a **Default Record**. Always ensure a Default Record is created when using Geolocation routing!
+          </p>
+        </div>
+
+        <h2>Useful Resources</h2>
+        <ul>
+          <li><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html" target="_blank" rel="noopener noreferrer">AWS Documentation: Route 53 Routing Policies</a></li>
+          <li><a href="https://aws.amazon.com/blogs/networking-and-content-delivery/choosing-between-geolocation-and-geoproximity-routing-policies-in-route-53/" target="_blank" rel="noopener noreferrer">AWS Architecture Blog: Geolocation vs Geoproximity</a></li>
+          <li><a href="https://www.youtube.com/results?search_query=AWS+Route+53+Routing+Policies+deep+dive" target="_blank" rel="noopener noreferrer">Official Video Search: Route 53 Traffic Management Policies</a></li>
+        </ul>
+
+        <div class="hands-on-lab-container">
+          <div class="lab-title-centered">Hands-On Lab</div>
+          <div class="lab-overview-heading">Lab Overview:</div>
+          <p>
+            In this lab, you will configure multi-region routing in Route 53. You will set up Weighted routing for canary deployments, implement Latency-based routing across two AWS regions, and configure Geolocation routing with a default fallback record.
+          </p>
+          <p>You can start the following lab(s):</p>
+          <p><a href="https://aws.amazon.com/training/" target="_blank" rel="noopener noreferrer" class="lab-link">GLAB 202 - Implementing Advanced Route 53 Traffic Routing Policies</a></p>
+
+          <div class="important-lab-expectation-box">
+            <strong>Important Lab Expectation:</strong> If you do not complete all labs during class time, you must finish them after class. Failing to complete all labs before the next session may cause you to fall behind.
+          </div>
+        </div>
+
+        <div class="tab-navigation-buttons">
+          <button class="btn-nav" onclick="switchTab(1)">Previous: Hosted Zones</button>
+          <button class="btn-nav" onclick="switchTab(3)">Next: Health Checks &amp; Failover</button>
+        </div>
+      </section>
+
+      <!-- TAB 3: HEALTH CHECKS & FAILOVER -->
+      <section id="pane-3" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-3">
+        <h1>Topic 3: Health Checks &amp; DNS Failover</h1>
+
+        <div class="problem-statement-box">
+          <h2>Problem Statement</h2>
+          <p>
+            An enterprise runs a primary application in an active AWS Region behind an Application Load Balancer. If an outage occurs in the primary region, the company requires immediate, automated redirection of all web traffic to a static error page hosted on Amazon S3 in a secondary region. How do you implement continuous monitoring and automated DNS failover without manual operator intervention?
+          </p>
+        </div>
+
+        <h2>Core Concepts: Route 53 Health Checks &amp; Active-Passive Failover</h2>
+        <p>
+          Amazon Route 53 health checks monitor the health and performance of your web application endpoints. When connected to DNS records, Route 53 routes traffic away from unhealthy resources automatically.
+        </p>
+
+        <h3>1. Types of Route 53 Health Checks</h3>
+        <ul>
+          <li><strong>Endpoint Health Checks:</strong> Monitors an IP address or domain name via HTTP, HTTPS, or TCP connection on a specified port. Considers an endpoint healthy if it returns a 2xx or 3xx HTTP status code within a configurable request threshold.</li>
+          <li><strong>Calculated Health Checks:</strong> Combines multiple individual health checks into a single parent health check using boolean logic (e.g., AND, OR, NOT, or OR x out of y).</li>
+          <li><strong>CloudWatch Alarm Health Checks:</strong> Monitors a CloudWatch metric alarm (e.g., EC2 high CPU, custom application error rates, or latency metrics).</li>
+        </ul>
+
+        <h3>2. Active-Passive vs. Active-Active Failover</h3>
+        <ul>
+          <li><strong>Active-Passive Failover:</strong> Uses a **Failover Routing Policy**. Route 53 directs all queries to the Primary record as long as its associated health check passes. If the Primary fails, Route 53 automatically returns the Secondary (Disaster Recovery) record.</li>
+          <li><strong>Active-Active Failover:</strong> Uses Weighted or Latency policies attached to health checks across multiple active regions. If one active region fails, traffic automatically redistributes among remaining healthy active endpoints.</li>
+        </ul>
+
+        <h3>3. Evaluate Target Health (ELB &amp; Route 53 Integration)</h3>
+        <p>
+          When creating an ALIAS record pointing to an AWS load balancer, you can set <strong>Evaluate Target Health = Yes</strong>. Route 53 leverages the load balancer’s internal health checks directly without requiring you to pay for or build a separate Route 53 health check!
+        </p>
+
+        <h2>Architectural Diagram: Active-Passive Failover Workflow</h2>
+        <svg viewBox="0 0 700 320" width="100%" height="auto" role="img" aria-label="Diagram showing Route 53 health checks monitoring a primary region and automatically shifting traffic to a secondary static S3 website upon failure.">
+          <rect x="10" y="10" width="680" height="300" rx="8" fill="#f7fafc" stroke="#cbd5e0" stroke-width="2"/>
+          
+          <!-- Route 53 -->
+          <rect x="250" y="30" width="200" height="60" rx="6" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+          <text x="260" y="55" font-weight="bold" fill="#0b5394" font-size="12">Route 53 DNS Resolver</text>
+          <text x="265" y="75" font-size="10" fill="#4a5568">(Failover Policy Active)</text>
+
+          <!-- Primary Path (Failed) -->
+          <rect x="50" y="140" width="260" height="130" rx="6" fill="#fff5f5" stroke="#e53e3e" stroke-width="2"/>
+          <text x="60" y="165" font-weight="bold" fill="#e53e3e">Primary Endpoint (us-east-1)</text>
+          <text x="60" y="185" font-size="11" fill="#718096">ALB + EC2 Fleet</text>
+          <rect x="70" y="200" width="220" height="50" rx="4" fill="#ffffff" stroke="#e53e3e"/>
+          <text x="80" y="230" font-weight="bold" fill="#e53e3e" font-size="11">[Health Check: FAILED x3]</text>
+
+          <!-- Secondary Path (Healthy) -->
+          <rect x="390" y="140" width="260" height="130" rx="6" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+          <text x="400" y="165" font-weight="bold" fill="#0079c9">Secondary DR (us-west-2)</text>
+          <text x="400" y="185" font-size="11" fill="#4a5568">S3 Static Maintenance Bucket</text>
+          <rect x="410" y="200" width="220" height="50" rx="4" fill="#ffffff" stroke="#3182ce"/>
+          <text x="420" y="230" font-weight="bold" fill="#2b6cb0" font-size="11">[Health Check: HEALTHY]</text>
+
+          <!-- Arrows -->
+          <path d="M 300 90 L 180 140" stroke="#e53e3e" stroke-width="2" stroke-dasharray="4"/>
+          <path d="M 400 90 L 520 140" stroke="#3182ce" stroke-width="3" marker-end="url(#arrow)"/>
+          <text x="450" y="115" font-size="11" font-weight="bold" fill="#3182ce">Traffic Redirected</text>
+        </svg>
+        <p><strong>Figure 3a:</strong> Route 53 active-passive DNS failover automatically rerouting traffic to secondary backup storage.</p>
+
+        <div class="exam-trigger-box">
+          <h2>Exam Trigger Callouts</h2>
+          <ul>
+            <li><strong>"Automated active-passive failover to a static maintenance page on S3"</strong> &rarr; <strong>Failover Routing Policy</strong> with Route 53 Health Checks.</li>
+            <li><strong>"Monitor health of an Application Load Balancer without extra cost"</strong> &rarr; Create an <strong>ALIAS record</strong> with <strong>Evaluate Target Health set to YES</strong>.</li>
+            <li><strong>"Trigger DNS failover based on custom application error metrics"</strong> &rarr; Route 53 Health Check based on a <strong>CloudWatch Alarm</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="warning-callout-box">
+          <h2>Exam Trap Warnings</h2>
+          <p>
+            <strong>TTL Caching Delay:</strong> DNS failover is not instant! Even when Route 53 updates DNS records upon health check failure, client web browsers and local ISP resolvers cache old DNS responses according to the record's **Time To Live (TTL)**. For rapid failover, keep TTL values low (e.g., 60 seconds).
+          </p>
+        </div>
+
+        <h2>Useful Resources</h2>
+        <ul>
+          <li><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html" target="_blank" rel="noopener noreferrer">AWS Documentation: Configuring DNS Failover</a></li>
+          <li><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks-creating.html" target="_blank" rel="noopener noreferrer">AWS Documentation: Creating Route 53 Health Checks</a></li>
+          <li><a href="https://www.youtube.com/results?search_query=AWS+Route+53+Health+Checks+and+DNS+Failover" target="_blank" rel="noopener noreferrer">Official Video Search: Route 53 Health Checks and Automated Failover</a></li>
+        </ul>
+
+        <div class="hands-on-lab-container">
+          <div class="lab-title-centered">Hands-On Lab</div>
+          <div class="lab-overview-heading">Lab Overview:</div>
+          <p>
+            In this lab, you will configure HTTP health checks monitoring a primary web application. You will build an active-passive failover policy linking the primary ALB to a secondary S3 static bucket, simulate a web server outage, and observe automated DNS failover in real time.
+          </p>
+          <p>You can start the following lab(s):</p>
+          <p><a href="https://aws.amazon.com/training/" target="_blank" rel="noopener noreferrer" class="lab-link">GLAB 203 - Building Resilient Active-Passive DNS Failover Architectures</a></p>
+
+          <div class="important-lab-expectation-box">
+            <strong>Important Lab Expectation:</strong> If you do not complete all labs during class time, you must finish them after class. Failing to complete all labs before the next session may cause you to fall behind.
+          </div>
+        </div>
+
+        <div class="tab-navigation-buttons">
+          <button class="btn-nav" onclick="switchTab(2)">Previous: Routing Policies</button>
+          <button class="btn-nav" onclick="switchTab(4)">Next: Hybrid DNS &amp; Resolver</button>
+        </div>
+      </section>
+
+      <!-- TAB 4: HYBRID DNS & RESOLVER -->
+      <section id="pane-4" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-4">
+        <h1>Topic 4: Hybrid DNS &amp; Route 53 Resolver</h1>
+
+        <div class="problem-statement-box">
+          <h2>Problem Statement</h2>
+          <p>
+            A enterprise connects its on-premises corporate data center to AWS using a Direct Connect circuit. On-premises Active Directory DNS servers must resolve private domain names hosted in AWS Private Hosted Zones (e.g., <code>app.internal.vpc</code>). At the same time, EC2 instances in the VPC must resolve on-premises server names (e.g., <code>db.corp.local</code>). Standard VPC DNS (AmazonProvidedDNS at <code>10.0.0.2</code>) cannot forward queries to on-premises servers. How do you achieve seamless hybrid DNS resolution without exposing DNS queries to the internet?
+          </p>
+        </div>
+
+        <h2>Core Concepts: Route 53 Resolver Endpoints</h2>
+        <p>
+          <strong>Amazon Route 53 Resolver</strong> provides recursive DNS lookup for Amazon VPC and hybrid networks. To connect VPC DNS with external networks (on-premises data centers or other cloud networks), you deploy <strong>Resolver Endpoints</strong>.
+        </p>
+
+        ### 1. Inbound vs. Outbound Resolver Endpoints
+        * **Inbound Resolver Endpoint:** Allows **on-premises DNS servers** to forward DNS queries to Route 53. It provisions Elastic Network Interfaces (ENIs) with private IPs inside your VPC. On-prem DNS servers forward queries for AWS private domains directly to these ENI IPs over VPN or Direct Connect.
+        * **Outbound Resolver Endpoint:** Allows **VPC workloads** to forward DNS queries to on-premises DNS servers. You create **Resolver Rules** (e.g., forward `corp.local` queries to on-prem DNS IP `192.168.1.50`).
+
+        <h2>Architectural Diagram: Hybrid DNS Resolution Architecture</h2>
+        <svg viewBox="0 0 700 320" width="100%" height="auto" role="img" aria-label="Diagram displaying Inbound and Outbound Route 53 Resolver endpoints routing DNS queries between on-premises Active Directory and AWS Private Hosted Zones over Direct Connect.">
+          <rect x="10" y="10" width="680" height="300" rx="8" fill="#f7fafc" stroke="#cbd5e0" stroke-width="2"/>
+          
+          <!-- On Premise Data Center -->
+          <rect x="30" y="50" width="220" height="230" rx="6" fill="#edf2f7" stroke="#4a5568" stroke-width="1.5"/>
+          <text x="40" y="75" font-weight="bold" fill="#2d3748">On-Premises Data Center</text>
+          
+          <rect x="45" y="100" width="190" height="60" rx="4" fill="#ffffff" stroke="#4a5568"/>
+          <text x="55" y="125" font-size="11" font-weight="bold" fill="#2d3748">On-Prem DNS Server</text>
+          <text x="55" y="145" font-size="10" fill="#718096">(IP: 192.168.1.50)</text>
+
+          <!-- AWS VPC -->
+          <rect x="350" y="50" width="320" height="230" rx="6" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.5"/>
+          <text x="360" y="75" font-weight="bold" fill="#0b5394">AWS VPC (Private Hosted Zone)</text>
+
+          <!-- Inbound Endpoint -->
+          <rect x="370" y="95" width="130" height="70" rx="4" fill="#ffffff" stroke="#3182ce" stroke-width="2"/>
+          <text x="375" y="120" font-size="11" font-weight="bold" fill="#0b5394">Inbound ENI</text>
+          <text x="375" y="140" font-size="10" fill="#4a5568">(Resolves *.internal.vpc)</text>
+
+          <!-- Outbound Endpoint -->
+          <rect x="370" y="185" width="130" height="70" rx="4" fill="#ffffff" stroke="#dd6b20" stroke-width="2"/>
+          <text x="375" y="210" font-size="11" font-weight="bold" fill="#7b341e">Outbound ENI</text>
+          <text x="375" y="230" font-size="10" fill="#4a5568">(Forwards *.corp.local)</text>
+
+          <!-- Direct Connect Line -->
+          <line x1="235" y1="130" x2="370" y2="130" stroke="#3182ce" stroke-width="2.5" marker-end="url(#arrow)"/>
+          <text x="245" y="120" font-size="10" font-weight="bold" fill="#3182ce">[Inbound Query Path]</text>
+
+          <line x1="370" y1="220" x2="235" y2="150" stroke="#dd6b20" stroke-width="2.5" marker-end="url(#arrow)"/>
+          <text x="245" y="200" font-size="10" font-weight="bold" fill="#dd6b20">[Outbound Query Path]</text>
+        </svg>
+        <p><strong>Figure 4a:</strong> Route 53 Resolver Inbound and Outbound Endpoints routing hybrid DNS queries across Direct Connect.</p>
+
+        <div class="exam-trigger-box">
+          <h2>Exam Trigger Callouts</h2>
+          <ul>
+            <li><strong>"Allow on-premises servers to resolve private domain names in an AWS VPC"</strong> &rarr; Route 53 Resolver <strong>Inbound Endpoint</strong>.</li>
+            <li><strong>"Allow EC2 instances in a VPC to resolve custom domain names hosted in an on-premises data center"</strong> &rarr; Route 53 Resolver <strong>Outbound Endpoint + Forwarding Rules</strong>.</li>
+            <li><strong>"Centralize hybrid DNS query handling across multiple VPCs and AWS accounts"</strong> &rarr; Route 53 Resolver Endpoints shared via <strong>AWS Resource Access Manager (RAM)</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="warning-callout-box">
+          <h2>Exam Trap Warnings</h2>
+          <p>
+            <strong>AmazonProvidedDNS Reserved IP:</strong> The VPC DNS server (Route 53 Resolver) is always located at the base of the VPC network range plus two (e.g., <code>10.0.0.2</code> for a <code>10.0.0.0/16</code> VPC). It cannot receive direct query packets from outside the VPC across VPN/Direct Connect unless you deploy an <strong>Inbound Resolver Endpoint</strong>.
+          </p>
+        </div>
+
+        <h2>Useful Resources</h2>
+        <ul>
+          <li><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-getting-started.html" target="_blank" rel="noopener noreferrer">AWS Documentation: Getting Started with Route 53 Resolver</a></li>
+          <li><a href="https://aws.amazon.com/blogs/networking-and-content-delivery/hybrid-cloud-dns-options-for-amazon-vpc/" target="_blank" rel="noopener noreferrer">AWS Architecture Blog: Hybrid Cloud DNS Patterns</a></li>
+          <li><a href="https://www.youtube.com/results?search_query=AWS+Route+53+Resolver+Inbound+Outbound+Endpoints" target="_blank" rel="noopener noreferrer">Official Video Search: Route 53 Hybrid Resolver Architecture</a></li>
+        </ul>
+
+        <div class="hands-on-lab-container">
+          <div class="lab-title-centered">Hands-On Lab</div>
+          <div class="lab-overview-heading">Lab Overview:</div>
+          <p>
+            In this lab, you will configure Route 53 Resolver for a hybrid cloud environment. You will deploy Inbound and Outbound Endpoints, create conditional DNS forwarding rules, and test bi-directional name resolution between a private VPC and a simulated on-premises network.
+          </p>
+          <p>You can start the following lab(s):</p>
+          <p><a href="https://aws.amazon.com/training/" target="_blank" rel="noopener noreferrer" class="lab-link">GLAB 204 - Deploying Route 53 Resolver Endpoints for Hybrid DNS Resolution</a></p>
+
+          <div class="important-lab-expectation-box">
+            <strong>Important Lab Expectation:</strong> If you do not complete all labs during class time, you must finish them after class. Failing to complete all labs before the next session may cause you to fall behind.
+          </div>
+        </div>
+
+        <div class="tab-navigation-buttons">
+          <button class="btn-nav" onclick="switchTab(3)">Previous: Health Checks</button>
+          <button class="btn-nav" onclick="switchTab(5)">Next: Pulling It Together</button>
+        </div>
+      </section>
+
+      <!-- TAB 5: PULLING IT TOGETHER -->
+      <section id="pane-5" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-5">
+        <h1>Topic 5: Pulling It Together</h1>
+
+        <h2>Side-by-Side Route 53 Feature Matrix</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature / Component</th>
+              <th>Scope &amp; Type</th>
+              <th>Primary AWS Use Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Public Hosted Zone</strong></td>
+              <td>Global Internet</td>
+              <td>Hosts DNS records reachable by public clients on the internet.</td>
+            </tr>
+            <tr>
+              <td><strong>Private Hosted Zone</strong></td>
+              <td>VPC Internal</td>
+              <td>Hosts internal DNS records accessible only inside specified VPCs.</td>
+            </tr>
+            <tr>
+              <td><strong>ALIAS Record</strong></td>
+              <td>AWS Resource Pointer</td>
+              <td>Maps zone apex domain (example.com) to AWS load balancers, S3, or CloudFront for free.</td>
+            </tr>
+            <tr>
+              <td><strong>Weighted Routing</strong></td>
+              <td>Traffic Control</td>
+              <td>Distributes traffic proportionally for blue/green or canary testing.</td>
+            </tr>
+            <tr>
+              <td><strong>Latency Routing</strong></td>
+              <td>Performance Optimization</td>
+              <td>Directs clients to the AWS region yielding the fastest response times.</td>
+            </tr>
+            <tr>
+              <td><strong>Geolocation Routing</strong></td>
+              <td>Location Compliance</td>
+              <td>Enforces regional legal compliance and location-specific content restrictions.</td>
+            </tr>
+            <tr>
+              <td><strong>Failover Routing</strong></td>
+              <td>Disaster Recovery</td>
+              <td>Reroutes traffic from a failing Primary region to a Secondary DR target automatically.</td>
+            </tr>
+            <tr>
+              <td><strong>Resolver Inbound Endpoint</strong></td>
+              <td>Hybrid Networking</td>
+              <td>Allows on-premises DNS servers to resolve private AWS hosted zones.</td>
+            </tr>
+            <tr>
+              <td><strong>Resolver Outbound Endpoint</strong></td>
+              <td>Hybrid Networking</td>
+              <td>Allows VPC instances to resolve on-premises corporate DNS names using forwarding rules.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Combined Global Enterprise DNS Architecture</h2>
+        <svg viewBox="0 0 700 400" width="100%" height="auto" role="img" aria-label="Combined enterprise architecture showing Route 53 resolving traffic via Latency routing to ALB and CloudFront, active-passive failover to S3, and hybrid Resolver endpoints to on-premises.">
+          <rect x="10" y="10" width="680" height="380" rx="8" fill="#f7fafc" stroke="#cbd5e0" stroke-width="2"/>
+          <text x="30" y="35" font-weight="bold" fill="#0b5394" font-size="14">Global Route 53 Architecture Synthesis</text>
+          
+          <!-- Route 53 Central -->
+          <rect x="250" y="55" width="200" height="80" rx="6" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+          <text x="260" y="80" font-weight="bold" fill="#0b5394" font-size="13">Amazon Route 53</text>
+          <text x="260" y="100" font-size="10" fill="#4a5568">&bull; Zone Apex ALIAS Support</text>
+          <text x="260" y="115" font-size="10" fill="#4a5568">&bull; Latency + Failover Policies</text>
+
+          <!-- US Region -->
+          <rect x="30" y="170" width="190" height="180" rx="6" fill="#ffffff" stroke="#3182ce" stroke-width="1.5"/>
+          <text x="40" y="195" font-weight="bold" fill="#0079c9" font-size="11">Primary: US-East-1</text>
+          <rect x="45" y="210" width="160" height="40" rx="3" fill="#ebf8ff" stroke="#3182ce"/>
+          <text x="55" y="235" font-size="10" fill="#2b6cb0">Application Load Balancer</text>
+          <rect x="45" y="260" width="160" height="40" rx="3" fill="#feebc8" stroke="#dd6b20"/>
+          <text x="55" y="285" font-size="10" fill="#7b341e">Health Check (Evaluate Target)</text>
+
+          <!-- EU Region -->
+          <rect x="250" y="170" width="190" height="180" rx="6" fill="#ffffff" stroke="#3182ce" stroke-width="1.5"/>
+          <text x="260" y="195" font-weight="bold" fill="#0079c9" font-size="11">Secondary: EU-Central-1</text>
+          <rect x="265" y="210" width="160" height="40" rx="3" fill="#ebf8ff" stroke="#3182ce"/>
+          <text x="275" y="235" font-size="10" fill="#2b6cb0">Application Load Balancer</text>
+          <rect x="265" y="260" width="160" height="40" rx="3" fill="#edf2f7" stroke="#4a5568"/>
+          <text x="275" y="285" font-size="10" fill="#2d3748">S3 DR Backup Bucket</text>
+
+          <!-- On Prem Hybrid -->
+          <rect x="470" y="170" width="200" height="180" rx="6" fill="#edf2f7" stroke="#4a5568" stroke-width="1.5"/>
+          <text x="480" y="195" font-weight="bold" fill="#2d3748" font-size="11">On-Premises Data Center</text>
+          <rect x="485" y="210" width="170" height="40" rx="3" fill="#ffffff" stroke="#4a5568"/>
+          <text x="495" y="235" font-size="10" fill="#2d3748">Active Directory DNS</text>
+          <rect x="485" y="260" width="170" height="40" rx="3" fill="#ffffff" stroke="#3182ce"/>
+          <text x="495" y="285" font-size="10" fill="#0b5394">Resolver Inbound ENI</text>
+
+          <!-- Connections -->
+          <line x1="300" y1="135" x2="120" y2="170" stroke="#3182ce" stroke-width="2"/>
+          <line x1="350" y1="135" x2="350" y2="170" stroke="#3182ce" stroke-width="2"/>
+          <line x1="400" y1="135" x2="570" y2="170" stroke="#4a5568" stroke-width="2" stroke-dasharray="4"/>
+        </svg>
+        <p><strong>Figure 5a:</strong> Master production architecture displaying global Route 53 routing, Multi-AZ load balancing, disaster recovery, and hybrid DNS resolution.</p>
+
+        <h2>SAA-C03 Exam Scenario Pattern Drills</h2>
+
+        <div style="margin-top: 1.5rem;">
+          <p><strong>Scenario 1:</strong> A company hosts its primary web application behind an Application Load Balancer in `us-east-1`. The marketing department wants to point the root domain (`example.com`) to this load balancer without paying DNS query fees. How should you configure the Route 53 record?</p>
+          <p><strong>Answer:</strong> Create an <strong>ALIAS record of type A</strong> at the zone apex (`example.com`) pointing directly to the ALB’s DNS name.</p>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <p><strong>Scenario 2:</strong> A company runs web application nodes in both `us-west-2` and `eu-west-1`. They want users in Europe to experience fast page load speeds, while users in North America are routed to the US nodes. Which routing policy should be implemented?</p>
+          <p><strong>Answer:</strong> Configure a <strong>Latency-Based Routing Policy</strong> with records pointing to the respective regional load balancers.</p>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <p><strong>Scenario 3:</strong> A gaming company must restrict access to an online casino application so that only users originating from the United Kingdom can access the UK servers, while all unmapped global traffic is routed to a landing page. Which configuration meets this requirement?</p>
+          <p><strong>Answer:</strong> Use a <strong>Geolocation Routing Policy</strong> with a record targeting the UK location, and create a compulsory <strong>Default Record</strong> to handle queries from all other locations.</p>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <p><strong>Scenario 4:</strong> An enterprise wants to test a new v2 release of an application deployed in AWS. They need 10% of global web requests to be served by the v2 application cluster and 90% by the stable v1 cluster. Which policy accomplishes this?</p>
+          <p><strong>Answer:</strong> Implement a <strong>Weighted Routing Policy</strong> assigning a weight of 90 to the v1 record and a weight of 10 to the v2 record.</p>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <p><strong>Scenario 5:</strong> An organization requires zero-downtime disaster recovery. If the primary application cluster fails health checks, Route 53 must immediately stop directing traffic to it and route all requests to an S3 static maintenance site. What policy should be configured?</p>
+          <p><strong>Answer:</strong> Configure a <strong>Failover Routing Policy</strong> set up as Primary for the application cluster (linked to a Route 53 health check) and Secondary for the S3 static website endpoint.</p>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <p><strong>Scenario 6:</strong> On-premises workloads connected via AWS Direct Connect must resolve private IP addresses for EC2 instances using a Private Hosted Zone (`internal.company.aws`). How should the cloud architect enable name resolution?</p>
+          <p><strong>Answer:</strong> Deploy a Route 53 Resolver <strong>Inbound Endpoint</strong> in the VPC and configure the on-premises DNS servers to forward queries for `internal.company.aws` to the Inbound Endpoint’s IP addresses.</p>
+        </div>
+
+        <div class="tab-navigation-buttons">
+          <button class="btn-nav" onclick="switchTab(4)">Previous: Hybrid DNS &amp; Resolver</button>
+          <button class="btn-nav" onclick="switchTab(6)">Next: Knowledge Check</button>
+        </div>
+      </section>
+
+      <!-- TAB 6: KNOWLEDGE CHECK -->
+      <section id="pane-6" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-6">
+        <h1>Topic 6: Knowledge Check</h1>
+        <p>Review these open-ended architectural questions to test your readiness for the AWS SAA-C03 exam. Click "Show model answer" to verify your reasoning.</p>
+
+        <!-- Question 1 -->
+        <div class="collapsible-container">
+          <button class="collapsible-trigger" onclick="toggleCollapsible('q1')">
+            <span>Question 1: Explain why a standard CNAME record cannot be used to point a root domain (zone apex) to an Application Load Balancer, and how Route 53 ALIAS records overcome this limitation.</span>
+            <span>+</span>
+          </button>
+          <div id="q1" class="collapsible-content">
+            <p><strong>Model Answer:</strong></p>
+            <p>Per standard DNS specifications (RFC 1034), a CNAME record cannot exist at the zone apex (`example.com`) because the root domain must contain Start of Authority (SOA) and Name Server (NS) records, and DNS rules forbid CNAMEs from coexisting with other record types for the same name.</p>
+            <p>Route 53 ALIAS records resolve this by acting as a pseudo-record. To external client DNS resolvers, an ALIAS record appears as a standard A or AAAA record with IP addresses, fulfilling the DNS specification. Internally, Route 53 automatically tracks the IP address changes of the underlying AWS resource (such as an ALB or CloudFront) and resolves the target directly in a single hop with zero query fees.</p>
+          </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="collapsible-container">
+          <button class="collapsible-trigger" onclick="toggleCollapsible('q2')">
+            <span>Question 2: Differentiate between Geolocation Routing and Geoproximity Routing policies. What key feature does Geoproximity offer that Geolocation lacks?</span>
+            <span>+</span>
+          </button>
+          <div id="q2" class="collapsible-content">
+            <p><strong>Model Answer:</strong></p>
+            <p>Geolocation Routing maps DNS queries strictly based on the geographic location of the user (Continent, Country, or US State). It is primarily used for legal data compliance, language localization, and content licensing enforcement.</p>
+            <p>Geoproximity Routing routes traffic based on the physical geographic distance between the user and the AWS resource. Unlike Geolocation, Geoproximity allows administrators to specify a <strong>Bias value</strong> (-99 to +99) to manually expand or shrink a resource region's geographic coverage area, dynamically shifting traffic burden between neighboring AWS regions using Route 53 Traffic Flow.</p>
+          </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="collapsible-container">
+          <button class="collapsible-trigger" onclick="toggleCollapsible('q3')">
+            <span>Question 3: How does the "Evaluate Target Health" setting on a Route 53 ALIAS record streamline health checking when pointing to an Application Load Balancer?</span>
+            <span>+</span>
+          </button>
+          <div id="q3" class="collapsible-content">
+            <p><strong>Model Answer:</strong></p>
+            <p>When "Evaluate Target Health" is set to "Yes" on an ALIAS record pointing to an Application Load Balancer, Route 53 inherits and evaluates the health status directly from the ALB’s underlying EC2 target groups.</p>
+            <p>If all backend instances behind the ALB fail their target group health checks, Route 53 determines the ALB endpoint itself to be unhealthy and routes DNS traffic away to an alternative healthy record (such as a failover secondary endpoint). This eliminates the cost and operational overhead of building custom Route 53 health checks for AWS load balancers.</p>
+          </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="collapsible-container">
+          <button class="collapsible-trigger" onclick="toggleCollapsible('q4')">
+            <span>Question 4: Describe the hybrid DNS query flow when an EC2 instance in a private VPC attempts to resolve a domain name hosted on an on-premises Active Directory server.</span>
+            <span>+</span>
+          </button>
+          <div id="q4" class="collapsible-content">
+            <p><strong>Model Answer:</strong></p>
+            <p>The DNS query flow proceeds as follows:</p>
+            <ol>
+              <li>The EC2 instance sends a DNS query for `server.corp.local` to the local VPC DNS resolver (`10.0.0.2`).</li>
+              <li>The Route 53 Resolver evaluates its <strong>Resolver Rules</strong> and matches a forwarding rule configured for domain `corp.local`.</li>
+              <li>The query is sent to a Route 53 Resolver <strong>Outbound Endpoint</strong> residing in the VPC subnet.</li>
+              <li>The Outbound Endpoint forwards the DNS packet across the AWS Direct Connect or Site-to-Site VPN circuit to the on-premises Active Directory DNS server IP address.</li>
+              <li>The on-premises DNS server resolves the query and returns the internal private IP address back along the same path to the EC2 instance.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="collapsible-container">
+          <button class="collapsible-trigger" onclick="toggleCollapsible('q5')">
+            <span>Question 5: A solutions architect is configuring Multi-Value Answer routing. How does Multi-Value Answer routing differ from a standard Elastic Load Balancer?</span>
+            <span>+</span>
+          </button>
+          <div id="q5" class="collapsible-content">
+            <p><strong>Model Answer:</strong></p>
+            <p>Multi-Value Answer routing is a <strong>DNS-level mechanism</strong> that allows Route 53 to return up to eight randomly selected healthy IP records in response to a single DNS query, providing basic DNS-based load availability and client-side retry capabilities.</p>
+            <p>Unlike an Elastic Load Balancer (ELB), Multi-Value Answer routing does NOT perform TCP/HTTP connection proxying, SSL/TLS termination, request routing based on URL paths/headers, or sophisticated algorithm-based traffic distribution. It acts purely as a DNS query response filter with integrated health check capabilities.</p>
+          </div>
+        </div>
+
+        <div class="tab-navigation-buttons">
+          <button class="btn-nav" onclick="switchTab(5)">Previous: Pulling It Together</button>
+          <button class="btn-nav" disabled>Next</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- JavaScript Tab Switching and Collapsible Logic -->
+  <script>
+    function switchTab(tabIndex) {
+      // Hide all tab panes
+      const panes = document.querySelectorAll('.tab-pane');
+      panes.forEach(pane => pane.classList.remove('active'));
+
+      // Deactivate all sidebar tab buttons
+      const buttons = document.querySelectorAll('.nav-tab-button');
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
+
+      // Activate selected tab pane and button
+      const targetPane = document.getElementById(`pane-${tabIndex}`);
+      const targetBtn = document.getElementById(`tab-btn-${tabIndex}`);
+
+      if (targetPane && targetBtn) {
+        targetPane.classList.add('active');
+        targetBtn.classList.add('active');
+        targetBtn.setAttribute('aria-selected', 'true');
+        
+        // Scroll main content back to top when switching tabs
+        document.getElementById('main-content').scrollTop = 0;
+      }
+    }
+
+    function toggleCollapsible(elementId) {
+      const content = document.getElementById(elementId);
+      if (content) {
+        if (content.style.display === 'block') {
+          content.style.display = 'none';
+        } else {
+          content.style.display = 'block';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
